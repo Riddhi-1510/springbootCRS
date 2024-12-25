@@ -22,8 +22,6 @@ public class StudentDto {
     @Size(min = 6, message = "password minimum size is 6")
     private String password;
 
-    @NotBlank(message = "course id can not be empty")
-    private List<Long> courseIds;
 
     public String getName() {
         return name;
@@ -50,11 +48,4 @@ public class StudentDto {
     }
 
 
-    public List<Long> getCourseIds() {
-        return courseIds;
-    }
-
-    public void setCourseIds(List<Long> courseIds) {
-        this.courseIds = courseIds;
-    }
 }

@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class SpringBootCrsApplication {
 
 	public static void main(String[] args) {
+		//return this function: configuration-application-context
+		//External_Libraries = node_modules like this
+		//pom.xml = package.json like this
 		SpringApplication.run(SpringBootCrsApplication.class, args);
 	}
 

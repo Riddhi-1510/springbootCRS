@@ -24,7 +24,6 @@ public class ProfessorDto {
     @Size(min = 6, message = "password minimum size is 6")
     private String password;
 
-    private List<Long> courseIds;
 
     public String getName() {
         return name;
@@ -51,11 +50,4 @@ public class ProfessorDto {
     }
 
 
-    public List<Long> getCourseIds() {
-        return courseIds;
-    }
-
-    public void setCourseIds(List<Long> courseIds) {
-        this.courseIds = courseIds;
-    }
 }
