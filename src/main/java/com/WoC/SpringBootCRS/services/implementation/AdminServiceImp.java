@@ -122,35 +122,114 @@ public class AdminServiceImp implements AdminService {
     @Override
     @Transactional
     public void assignCourse() {
+        List<CourseRequestForm> courseRequests = courseRequestFormRepo.findAll();
 
-        List<CourseRequestForm> courseRequests = courseRequestFormRepo.findAll(Sort.by("requestedDate"));
+        try {
+            for (CourseRequestForm request : courseRequests) {
+                List<Course> allocatedCourses = new ArrayList<>();
+                Iterator<Course> iterator = request.getRequestedCourses().iterator();
 
-        for(CourseRequestForm request : courseRequests){
-//            System.out.println(request.getRequestedCourses());
-              List<Course> allocatedCourses = new ArrayList<>();
-              for(Course course : request.getRequestedCourses()){
-                  Long courseId = course.getId();
-                  if(course.getRemainingSeats()!=0){
-                      allocatedCourses.add(course);
-                      Student student = request.getStudent();
-                      student.getCourses().add(course);
-                      course.getStudents().add(student);
-                      course.setRemainingSeats(course.getRemainingSeats()-1);
-                      studentRepo.save(student);
-                      courseRepo.save(course);
-                  }
-                  if(allocatedCourses.size()==3){
-                      break;
-                  }
-              }
+                while (iterator.hasNext()) {
+                    Course course = iterator.next();
+                    if (course.getRemainingSeats() > 0) {
+                        allocatedCourses.add(course);
+
+                        Student student = request.getStudent();
+                        student.getCourses().add(course);
+                        course.getStudents().add(student);
+                        course.setRemainingSeats(course.getRemainingSeats() - 1);
+                    }
+                    if (allocatedCourses.size() == 3) {
+                        break;
+                    }
+                }
+            }
+
+            studentRepo.flush();
+            courseRepo.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error during course allocation", e);
         }
-//  Course Allocation Done
-//        for (CourseRequestForm request : courseRequests) {
-//            Student student = request.getStudent();
-//            System.out.println("Student ID: " + student.getId() + ", Allocated Courses: " + student.getCourses());
-//        }
-
     }
+
+
+//    @Override
+//    @Transactional
+//    public void assignCourse() {
+//
+////        List<CourseRequestForm> courseRequests = courseRequestFormRepo.findAll(Sort.by("requestedDate"));
+////
+////        for(CourseRequestForm request : courseRequests){
+//////            System.out.println(request.getRequestedCourses());
+////              List<Course> allocatedCourses = new ArrayList<>();
+////              for(Course course : request.getRequestedCourses()){
+////                  Long courseId = course.getId();
+////                  if(course.getRemainingSeats()!=0){
+////                      allocatedCourses.add(course);
+////                      Student student = request.getStudent();
+////                      student.getCourses().add(course);
+////                      course.getStudents().add(student);
+////                      course.setRemainingSeats(course.getRemainingSeats()-1);
+////                      studentRepo.save(student);
+////                      courseRepo.save(course);
+////                  }
+////                  if(allocatedCourses.size()==3){
+////                      break;
+////                  }
+////              }
+////        }
+//////  Course Allocation Done
+//////        for (CourseRequestForm request : courseRequests) {
+//////            Student student = request.getStudent();
+//////            System.out.println("Student ID: " + student.getId() + ", Allocated Courses: " + student.getCourses());
+//////        }
+//        List<CourseRequestForm> courseRequests = courseRequestFormRepo.findAll();
+////
+//
+//        try {
+//            for (CourseRequestForm request : courseRequests) {
+//                List<Course> allocatedCourses = new ArrayList<>();
+////                for (Course course : request.getRequestedCourses()) {
+////                    Long courseId = course.getId();
+////                    if (course.getRemainingSeats() != 0) {
+////                        allocatedCourses.add(course);
+////                        Student student = request.getStudent();
+////                        student.getCourses().add(course);
+////                        course.getStudents().add(student);
+////                        course.setRemainingSeats(course.getRemainingSeats() - 1);
+////                        studentRepo.save(student);
+////                        courseRepo.save(course);
+////                    }
+////                    if (allocatedCourses.size() == 3) {
+////                        break;
+////                    }
+////                }
+//                Iterator<Course> iterator = request.getRequestedCourses().iterator();
+//                while (iterator.hasNext()) {
+//                    Course course = iterator.next();
+//                    if (course.getRemainingSeats() != 0) {
+//                        allocatedCourses.add(course);
+//                        Student student = request.getStudent();
+//                        student.getCourses().add(course); // Modification
+//                        course.getStudents().add(student); // Modification
+//                        course.setRemainingSeats(course.getRemainingSeats() - 1);
+//                        studentRepo.save(student);
+//                        courseRepo.save(course);
+//                    }
+//                    if (allocatedCourses.size() == 3) {
+//                        break;
+//                    }
+//                }
+//
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Error during course allocation", e);
+//        }
+//
+//
+//    }
 
     @Override
     @Transactional
